@@ -176,16 +176,28 @@ def RunGame(): # pelin aloitus
             addnew = input("Add new player? (y/n) : ")
 
             if addnew == "y":
-                newplayer = input("Ingame name: ")
-                Playernum = GameData["PlayersIngame"] + 1
-                playeridentifier = "Player" + str(Playernum)
 
-                GameData.__setitem__("PlayersIngame", (GameData["PlayersIngame"] + 1))
+                def SelectName():
 
-                GameData["Players"].__setitem__(playeridentifier, True)
+                    newplayer = input("Ingame name: ")
 
-                Points.__setitem__(playeridentifier,0)
-                Usernames.__setitem__(playeridentifier,newplayer)
+                    for Player in GameData["Players"]:
+                        if newplayer == Usernames.get(Player):
+                            print("------")
+                            print("This name is already in use.")
+                            print("------")
+                            return SelectName()
+                    Playernum = GameData["PlayersIngame"] + 1
+                    playeridentifier = "Player" + str(Playernum)
+
+                    GameData.__setitem__("PlayersIngame", (GameData["PlayersIngame"] + 1))
+
+                    GameData["Players"].__setitem__(playeridentifier, True)
+
+                    Points.__setitem__(playeridentifier,0)
+                    Usernames.__setitem__(playeridentifier,newplayer)
+
+                SelectName()
 
             elif addnew == "n":
                 AllPlayersIn = True
