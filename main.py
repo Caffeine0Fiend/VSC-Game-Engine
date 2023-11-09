@@ -17,9 +17,9 @@
 # voisin hienostella inputit : Valmis
 # voisin heinostella printit : Valmis
 # lisätä peli teitojen vaihto : Valmis
-# converttaa pelistä, peli plätformiksi : Työn Alla
-# lisätä lisää vaihtoehtoja : Työn Alla
-# lisää pelejä : Työn alla
+# converttaa pelistä, peli plätformiksi : Valmis
+# lisätä lisää vaihtoehtoja : Osittain Valmis
+# lisää pelejä : Osittain Valmis
 # -------------------------------------------------------------
 
 # ----------------------------------------------------------------
