@@ -22,6 +22,9 @@
 # lisää pelejä : Valmis
 # -------------------------------------------------------------
 
+# Trello > https://trello.com/b/IzZj8Om5/peli-trello
+# Github > https://github.com/Caffeine0Fiend/VSC-Game-Engine
+
 # ----------------------------------------------------------------
 
 # imports
