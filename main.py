@@ -304,6 +304,8 @@ def R_P_S_AI(gamedata :dict):
     time.sleep(3)
     return "Completed Game"
 
+    
+game_finished = False
 def Multi_user_dungeon(gamedata :dict):
 
     GamePlayer = player()
@@ -326,7 +328,6 @@ def Multi_user_dungeon(gamedata :dict):
         4: [1000, "500x500"],
     }
 
-    game_finished = False
     finish_type = None
 
     def HealthCheck():
@@ -334,6 +335,15 @@ def Multi_user_dungeon(gamedata :dict):
             game_finished = True
             finish_type = "Death"
             printcustom("died")
+            print(GamePlayer)
+            PrintSpace(8)
+            return "ded"
+        return "alive"
+        
+    checkup = HealthCheck()
+
+    if checkup == "ded":
+        return "Completed Game"
     
     for Item in GridTypes:
         print(Item, GridTypes.get(Item)[1])
@@ -385,6 +395,11 @@ def Multi_user_dungeon(gamedata :dict):
 
         print(f"Your currently in {Adventure_Grid.get(GamePlayer.position)}")
 
+        state = HealthCheck()
+
+        if state == "ded":
+            return "death"
+        
         GamePlayer.itemsstored = 0
         for I in GamePlayer.inventory:
             GamePlayer.itemsstored + GamePlayer.inventory.get(I)
@@ -408,7 +423,7 @@ def Multi_user_dungeon(gamedata :dict):
         num = 1
         interacting = True
         lastprint = ""
-        while interacting:
+        while interacting and game_finished != True:
             
             recount = 1
             grid_data :dict = GridTypeData.get(GamePlayer.position)
@@ -445,20 +460,46 @@ def Multi_user_dungeon(gamedata :dict):
                                 grid_data.__setitem__(recount, None)
 
                                 return "Breakloop"
+                            elif acti == "Attack":
+                                inventory = GamePlayer.inventory
+
+                                if inventory.get("Weapon") != None:
+                                    inventory.__setitem__("Weapon",inventory.get("Weapon") - 1)
+                                    print("1 Weapon Used")
+                                    grid_data.__setitem__(recount, None)
+                                else:
+                                    print("You fight barehanded")
+                                    time.sleep(3)
+                                    
+                                    victory = random.randint(0,100) <= 2
+
+                                    if victory:
+                                        grid_data.__setitem__(recount, None)
+                                        return "Breakloop"
+                                    else:
+                                        GamePlayer.health = 0
+                                        return "Died"
 
                         act = input("")
                         if ValidActions.get(act) != None and ValidActions.get(act) == True:
                             returned = Action(act)
                             if returned == "Breakloop":
                                 return "Breakloop"
+                            elif returned == "Died":
+                                return "Died"
                         else:
                             print("InvalidAction")
                             returned = Ask()
                             if returned == "Breakloop":
                                 return "Breakloop"
+                            elif returned == "Died":
+                                return "Died"
 
                     returned = Ask()
                     if returned == "Breakloop":
+                        break
+                    elif returned == "Died":
+                        HealthCheck()
                         break
                 else:
                     break
@@ -469,22 +510,31 @@ def Multi_user_dungeon(gamedata :dict):
 
             pass
 
-        print(f"{1} : View Player")
-        print(f"{2} : Head Forwards")
-        print(f"{3} : Head Backwards")
+        if game_finished != True or GamePlayer.health == 0:
 
-        PrintSpace(3)
-        action = input("")
+            if HealthCheck() == "alive":
 
-        if action == "RawPrint":
-            print(GridTypeData)
-            print(Adventure_Grid)
-            print(GamePlayer.position)
-            return GameLoop(False)
-        action = int(action)
-        Act(action)
-        if game_finished != True:
-            GameLoop(False)
+                print(f"{1} : View Player")
+                print(f"{2} : Head Forwards")
+                print(f"{3} : Head Backwards")
+
+                PrintSpace(3)
+                action = input("")
+
+                if action == "RawPrint":
+                    print(GridTypeData)
+                    print(Adventure_Grid)
+                    print(GamePlayer.position)
+                    return GameLoop(False)
+                action = int(action)
+                Act(action)
+
+        if game_finished != True or GamePlayer.health == 0:
+            returned = GameLoop(False)
+            if returned == "Completed Game":
+                return "Completed Game"
+        else:
+            return "Completed Game"
         pass
 
     if answer != None :
@@ -496,21 +546,33 @@ def Multi_user_dungeon(gamedata :dict):
                 print(f"You wake up inmiddle of two {Adventure_Grid.get((GamePlayer.position-1))}s, with nothing in your possession.")
             else:  
                 print(f"You wake up near a {Adventure_Grid.get((GamePlayer.position-1))}, with nothing in your possession, you also notice a {Adventure_Grid.get((GamePlayer.position+1))} nearby")
-            GameLoop(True)
+            returned = GameLoop(True)
+            if returned == "Completed Game":
+                print("Closing game in 3 seconds")
+                time.sleep(3)
+                return "Completed Game"
         elif beginning == 2:
             GamePlayer.inventory.__setitem__("Food", 1)
             if Adventure_Grid.get((GamePlayer.position-1)) == Adventure_Grid.get((GamePlayer.position+1)):
                 print(f"You wake up inmiddle of two {Adventure_Grid.get((GamePlayer.position-1))}s, with nothing in your possession.")
             else: 
                 print(f"You find yourself near a {Adventure_Grid.get((GamePlayer.position-1))}, with small rations in your possession, you also notice a {Adventure_Grid.get((GamePlayer.position+1))} nearby")
-            GameLoop(True)
+            returned = GameLoop(True)
+            if returned == "Completed Game":
+                print("Closing game in 3 seconds")
+                time.sleep(3)
+                return "Completed Game"
         else:
             GamePlayer.inventory.__setitem__("Food", 4)
             if Adventure_Grid.get((GamePlayer.position-1)) == Adventure_Grid.get((GamePlayer.position+1)):
                 print(f"You wake up inmiddle of two {Adventure_Grid.get((GamePlayer.position-1))}s, with nothing in your possession.")
             else:
                 print(f"You appear to be near a {Adventure_Grid.get((GamePlayer.position-1))}, with rations for 4 days in your possession, you also notice a {Adventure_Grid.get((GamePlayer.position+1))} nearby")
-            GameLoop(True)
+            returned = GameLoop(True)
+            if returned == "Completed Game":
+                print("Closing game in 3 seconds")
+                time.sleep(3)
+                return "Completed Game"
     pass
 
 
