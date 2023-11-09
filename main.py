@@ -18,14 +18,15 @@
 # voisin heinostella printit : Valmis
 # lisätä peli teitojen vaihto : Valmis
 # converttaa pelistä, peli plätformiksi : Valmis
-# lisätä lisää vaihtoehtoja : Osittain Valmis
-# lisää pelejä : Osittain Valmis
+# lisätä lisää vaihtoehtoja : Valmis
+# lisää pelejä : Valmis
 # -------------------------------------------------------------
 
 # ----------------------------------------------------------------
 
 # imports
 import random
+import time
 
 # player data
 Points = {}
@@ -43,6 +44,10 @@ def RollDice(): # nopan heitto
         return 1
     else:
         return random.randint(2,6)
+    
+def PrintSpace(num: int):
+    for i in range(1,num):
+        print("")
 
 def Pig_Game(gamedata :dict): # peli looppi pelin loppuun asti
     if gamedata["Round"] > 1:
@@ -99,11 +104,15 @@ def Pig_Game(gamedata :dict): # peli looppi pelin loppuun asti
     if gamedata["Game Ended"] != True:
         Pig_Game(gamedata)
     else:
+        PrintSpace(5)
         print(f" Game ended with the Stats being")
         print(f"Winner : " + gamedata["Winner"])
         print("Points :")
         for Player in gamedata["Players"]:
             print(f"{Usernames.get(Player)} scored a total of {Points.get(Player)} points")
+
+        print(f"Returning to main menu in 3 seconds")
+        time.sleep(3)
         return "Completed Game"
     pass
 
@@ -121,6 +130,7 @@ def R_P_S_AI(gamedata :dict):
     elif Bestof < 3:
         Bestof = 3
     RequiredForWin = (Bestof/2)
+    RequiredForWin = int(RequiredForWin)
     if Bestof >= 4:
         RequiredForWin += 1
     elif Bestof == 3:
@@ -189,6 +199,8 @@ def R_P_S_AI(gamedata :dict):
             print("---")
             print("Invalid Input")
             print("---")
+
+    PrintSpace(5)        
     if Ai_Points >= RequiredForWin:
         print("")
         print("---")
@@ -199,6 +211,9 @@ def R_P_S_AI(gamedata :dict):
         print("---")
         print("Player Wins the game")
         print("---")
+    
+    print(f"Returning to main menu in 3 seconds")
+    time.sleep(3)
     return "Completed Game"
 
 
@@ -213,6 +228,7 @@ ValidGames = {
 
 def RunGame(): # pelin aloitus
 
+    PrintSpace(255)
     print("------")
     print("VSC Gradia Game Engine Project")
     print("--")
