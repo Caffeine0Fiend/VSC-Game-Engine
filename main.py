@@ -113,13 +113,27 @@ def R_P_S_AI(gamedata :dict):
         return selections[random.randint(1,3)]
 
     print("---")
-    print("This game will be ran in the Best of Three format")
+
+    Bestof = int(input("This game will be played as Best of (3-5) : "))
+    Bestof = int(Bestof)
+    if Bestof > 5:
+        Bestof = 5
+    elif Bestof < 3:
+        Bestof = 3
+    RequiredForWin = (Bestof/2)
+    if Bestof >= 4:
+        RequiredForWin += 1
+    elif Bestof == 3:
+        RequiredForWin = 2
+
+    print(f"This game will be ran in the Best of {Bestof} format")
+    print(f"To win youll have to score {RequiredForWin} points")
     print("---")
 
     Ai_Points = 0
     Player_Points = 0
 
-    while Ai_Points < 2 and Player_Points < 2:
+    while Ai_Points < RequiredForWin and Player_Points < RequiredForWin:
         
         for itm in selections:
             print(itm,":",selections.get(itm))
@@ -175,7 +189,7 @@ def R_P_S_AI(gamedata :dict):
             print("---")
             print("Invalid Input")
             print("---")
-    if Ai_Points >= 2:
+    if Ai_Points >= RequiredForWin:
         print("")
         print("---")
         print("AI Wins the game")
