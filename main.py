@@ -1,5 +1,5 @@
 
-# Projecti 1 >
+# VSC Game Engine
 # ---------------------------------------------------------------
 
 # Ideana oli tehdä Pig noppapeli
