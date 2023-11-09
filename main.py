@@ -30,6 +30,11 @@ import random
 # player data
 Points = {}
 Usernames = {}
+selections = {
+        1: "Rock",
+        2: "Paper",
+        3: "Scissors",
+    }
 
 # functions
 def RollDice(): # nopan heitto
@@ -102,6 +107,95 @@ def Pig_Game(gamedata :dict): # peli looppi pelin loppuun asti
         return "Completed Game"
     pass
 
+def R_P_S_AI(gamedata :dict):
+
+    def SelectRandom():
+        return selections[random.randint(1,3)]
+
+    print("---")
+    print("This game will be ran in the Best of Three format")
+    print("---")
+
+    Ai_Points = 0
+    Player_Points = 0
+
+    while Ai_Points < 2 and Player_Points < 2:
+        
+        for itm in selections:
+            print(itm,":",selections.get(itm))
+        
+        inp = int(input(f"Pick a choice (1-3) : "))
+
+        if selections.get(inp) != None:
+            Selected = selections.get(inp)
+            AI_Selected = SelectRandom()
+
+            if Selected == "Rock" and AI_Selected == "Scissors":
+                Player_Points = Player_Points + 1
+                print("---")
+                print(f"Player Wins with {Selected}")
+                print("")
+                print(f"Player Points : {Player_Points}")
+                print(f"AI Points : {Ai_Points}")
+                print("---")
+            elif Selected == "Paper" and AI_Selected == "Rock":
+                Player_Points = Player_Points + 1
+                print("---")
+                print(f"Player Wins with {Selected}")
+                print("")
+                print(f"Player Points : {Player_Points}")
+                print(f"AI Points : {Ai_Points}")
+                print("---")
+            elif Selected == "Scissors" and AI_Selected == "Paper":
+                Player_Points = Player_Points + 1
+                print("---")
+                print(f"Player Wins with {Selected}")
+                print("")
+                print(f"Player Points : {Player_Points}")
+                print(f"AI Points : {Ai_Points}")
+                print("---")
+            elif Selected == AI_Selected:
+                print("---")
+                print("Tie")
+                print("")
+                print(f"Player Points : {Player_Points}")
+                print(f"AI Points : {Ai_Points}")
+                print("---") 
+            else:
+                Ai_Points = Ai_Points + 1
+                print("---")
+                print(f"AI Wins with {AI_Selected}")
+                print("")
+                print(f"Player Points : {Player_Points}")
+                print(f"AI Points : {Ai_Points}")
+                print("---")
+
+
+        else:
+            print("---")
+            print("Invalid Input")
+            print("---")
+    if Ai_Points >= 2:
+        print("")
+        print("---")
+        print("AI Wins the game")
+        print("---")
+    else:
+        print("")
+        print("---")
+        print("Player Wins the game")
+        print("---")
+    return "Completed Game"
+
+
+
+ValidGames = {
+    "PDC": "Multi",
+    "RPS": "Single",
+
+    "Rock Paper Scissors": "Single",
+    "Pig Dice Game": "Multi",
+}
 
 def RunGame(): # pelin aloitus
 
@@ -114,7 +208,10 @@ def RunGame(): # pelin aloitus
 
     print("")
     
-    print("> Pig Dice Game (PDC)")
+    print("> Pig Dice Game (PDC) < Multiplayer")
+    print("> Rock, Paper, Scissors (RPS) < Singleplayer with AI")
+
+    print("")
 
     print("------")
 
@@ -211,6 +308,8 @@ def RunGame(): # pelin aloitus
     if SelectGame == "Pig Dice Game" or SelectGame == "PDC":
         config() # call config
         ValidGame = True
+    elif SelectGame == "Rock Paper Scissors" or SelectGame == "RPS":
+        ValidGame = True
     elif SelectGame == "None":
         return
     else:
@@ -222,7 +321,7 @@ def RunGame(): # pelin aloitus
         else:
             return
 
-    if GameData["PlayersIngame"] <= 0 and SelectGame != "None" and ValidGame: # incase you didnt add players
+    if GameData["PlayersIngame"] <= 0 and SelectGame != "None" and ValidGame and ValidGames.get(SelectGame) != "Single": # incase you didnt add players
         Edit = input("are you sure you want to begin with no players? (y/n) : ")
 
         if Edit == "y":
@@ -238,10 +337,16 @@ def RunGame(): # pelin aloitus
     
         print("Starting Game")
 
-        game = Pig_Game(GameData)
-        if game == "Completed Game":
-            RunGame()
-
+        if SelectGame == "Pig Dice Game" or SelectGame == "PDC":
+            game = Pig_Game(GameData)
+            if game == "Completed Game":
+                RunGame()
+        elif SelectGame == "Rock Paper Scissors" or SelectGame == "RPS":
+            print("> Rock, Paper, Scissors (RPS)")
+            print("------")
+            game = R_P_S_AI(GameData)
+            if game == "Completed Game":
+                RunGame()
 
 # begin game
 RunGame()
