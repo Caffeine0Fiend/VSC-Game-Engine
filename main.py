@@ -309,9 +309,9 @@ def RunGame(): # pelin aloitus
                 editsettings()
             else:
                 return
-        
 
-    
+
+
         Edit = input("Edit Settings? (y/n) : ")
         if Edit == "y":
             editsettings()
@@ -385,10 +385,10 @@ def RunGame(): # pelin aloitus
         elif Edit == "n":
             config()
         return
-    
+
     if SelectGame != "None":
         print("------")
-    
+
         print("Starting Game")
 
         if SelectGame == "Pig Dice Game" or SelectGame == "PDC":
