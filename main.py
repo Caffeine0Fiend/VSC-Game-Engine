@@ -1,12 +1,11 @@
-
-# 
+#
 # ██╗░░░██╗░██████╗░█████╗░  ░██████╗░░█████╗░███╗░░░███╗███████╗  ███████╗███╗░░██╗░██████╗░██╗███╗░░██╗███████╗
 # ██║░░░██║██╔════╝██╔══██╗  ██╔════╝░██╔══██╗████╗░████║██╔════╝  ██╔════╝████╗░██║██╔════╝░██║████╗░██║██╔════╝
 # ╚██╗░██╔╝╚█████╗░██║░░╚═╝  ██║░░██╗░███████║██╔████╔██║█████╗░░  █████╗░░██╔██╗██║██║░░██╗░██║██╔██╗██║█████╗░░
 # ░╚████╔╝░░╚═══██╗██║░░██╗  ██║░░╚██╗██╔══██║██║╚██╔╝██║██╔══╝░░  ██╔══╝░░██║╚████║██║░░╚██╗██║██║╚████║██╔══╝░░
 # ░░╚██╔╝░░██████╔╝╚█████╔╝  ╚██████╔╝██║░░██║██║░╚═╝░██║███████╗  ███████╗██║░╚███║╚██████╔╝██║██║░╚███║███████╗
 # ░░░╚═╝░░░╚═════╝░░╚════╝░  ░╚═════╝░╚═╝░░╚═╝╚═╝░░░░░╚═╝╚══════╝  ╚══════╝╚═╝░░╚══╝░╚═════╝░╚═╝╚═╝░░╚══╝╚══════╝
-# ---------------------------------------------------------------
+#
 
 # Ideana oli tehdä Pig noppapeli
 # annettu aika on perjantaihin mennessä
@@ -40,11 +39,81 @@ import time
 # player data
 Points = {}
 Usernames = {}
+Adventure_Grid = {} # grid positions
+GridTypeData = {} # storing data for grid positions
 selections = {
         1: "Rock",
         2: "Paper",
         3: "Scissors",
     }
+Grid_Types = {
+    1: "Forest",
+    2: "Brick Buidling",
+    3: "Cave",
+    4: "Open Field",
+    5: "Town",
+    5: "Trail",
+    6: "River",
+}
+Grid_Items = {
+    1: "Water Bottle",
+    2: "Food",
+    3: "Orc",
+    4: "Wolf",
+    5: "Weapon",
+    5: "Poison",
+    6: "Shelter",
+}
+GridValues = {
+    "Water Bottle" : ["Take", "Drink", "Ignore"],
+    "Food" : ["Take", "Eat", "Ignore"],
+    "Orc" : ["Attack", "Retreat", "Run", "Ignore"],
+    "Wolf" : ["Attack", "Retreat", "Run", "Ignore"],
+    "Weapon" : ["Take","Ignore"],
+    "Poison" : ["Take", "Consume", "Ignore"],
+    "Shelter" : ["Await Daytime", "Ignore"],
+}
+Reoccuring = {
+    "Forest":True,
+    "Open Field":True,
+    "River":True,
+}
+
+class player:
+    health: 100
+    maxhealth: 100
+    hunger: 0
+    thirst: 0
+    temperature: random.randint(35,37)
+    position: 0
+    itemsstored: 0
+    inventory: {}
+
+    def __init__(self, position = 0, thirst = 0, hunger = 0, temperature = random.randint(35,37), inventory = {}, health = 100, maxhealth = 100, itemsstored = 0) -> None:
+        self.position = position
+        self.thirst = thirst
+        self.hunger = hunger
+        self.temperature = temperature
+        self.inventory = inventory
+        self.health = health
+        self.maxhealth = maxhealth
+        self.itemsstored = itemsstored
+        pass
+
+    def __str__(self) -> str:
+        print("█▀█ █░░ ▄▀█ █▄█ █▀▀ █▀█   █▀ ▀█▀ ▄▀█ ▀█▀ █▀")
+        print("█▀▀ █▄▄ █▀█ ░█░ ██▄ █▀▄   ▄█ ░█░ █▀█ ░█░ ▄█")
+        print("")
+        print(f"Health : {self.health}/{self.maxhealth}")
+        print(f"Hunger : {self.hunger}/{100}")
+        print(f"Thirst : {self.thirst}/{100}")
+        print(f"Temperature : {self.temperature}°C")
+        print("")
+        print("Your Inventory Contains:")
+        print("-")
+        for I in self.inventory:
+            print(self.inventory.get(I), I)
+        return "-"
 
 # functions
 def RollDice(): # nopan heitto
@@ -235,13 +304,223 @@ def R_P_S_AI(gamedata :dict):
     time.sleep(3)
     return "Completed Game"
 
+def Multi_user_dungeon(gamedata :dict):
+
+    GamePlayer = player()
+
+    def printcustom(typetext):
+
+        if typetext == "died":
+            PrintSpace(255)
+            print("██╗░░░██╗░█████╗░██╗░░░██╗  ██████╗░██╗███████╗██████╗░")
+            print("╚██╗░██╔╝██╔══██╗██║░░░██║  ██╔══██╗██║██╔════╝██╔══██╗")
+            print("░╚████╔╝░██║░░██║██║░░░██║  ██║░░██║██║█████╗░░██║░░██║")
+            print("░░╚██╔╝░░██║░░██║██║░░░██║  ██║░░██║██║██╔══╝░░██║░░██║")
+            print("░░░██║░░░╚█████╔╝╚██████╔╝  ██████╔╝██║███████╗██████╔╝")
+            print("░░░╚═╝░░░░╚════╝░░╚═════╝░  ╚═════╝░╚═╝╚══════╝╚═════╝░")
+
+    GridTypes = {
+        1: [100, "50x50"],
+        2: [200, "100x100"],
+        3: [500, "250x250"],
+        4: [1000, "500x500"],
+    }
+
+    game_finished = False
+    finish_type = None
+
+    def HealthCheck():
+        if GamePlayer.health <= 0:
+            game_finished = True
+            finish_type = "Death"
+            printcustom("died")
+    
+    for Item in GridTypes:
+        print(Item, GridTypes.get(Item)[1])
+    type = int(input("Select a World Size (1-4) : "))
+    GridValue = GridTypes.get(type)
+    print(GridValue[1],"Selected")
+    
+    #printtype = input("Input Print Type (Raw/Clean) : ")
+    GridCount = 0
+    PieceBefore = "Forest"
+    for I in range(0,GridTypes.get(type)[0]):
+        GridCount += 1
+        GridPiece = Grid_Types.get(random.randint(1,6))
+        if Reoccuring.get(PieceBefore) != None and Reoccuring[PieceBefore] == True:
+            if random.randint(0,100) <= 30:
+                GridPiece = PieceBefore
+        Items = {}
+        TypeCount = 0
+        for I in range(0,random.randint(2,6)):
+
+            if random.randint(0,100) <= 25:
+                TypeCount += 1
+                item = Grid_Items.get(random.randint(1,6))
+                Items.__setitem__(TypeCount,item)
+        Adventure_Grid.__setitem__(GridCount, GridPiece)
+        GridTypeData.__setitem__(GridCount,Items)
+        PieceBefore = GridPiece
+       # if printtype == "Test_Clean":
+           # print(GridCount,Items)
+    #print("-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
+    #if printtype == "Test":
+     #   print(GridTypeData)
+   # print(Adventure_Grid)
+    #print("-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
+
+    GamePlayer.position = (GridCount/2) + random.randint(-GridCount/4,GridCount/4)
+    print("Welcome to the vast lands! Would you like any instructions?")
+    PrintSpace(2)
+    answer = input("")
+
+    def printposition():
+        if Adventure_Grid.get((GamePlayer.position-1)) == Adventure_Grid.get((GamePlayer.position+1)):
+            print(f"You are inmiddle of two {Adventure_Grid.get((GamePlayer.position-1))}s, with {GamePlayer.itemsstored} items in your possession.")
+        else:  
+            print(f"You are near a {Adventure_Grid.get((GamePlayer.position-1))}, with {GamePlayer.itemsstored} items in your possession, theres still a {Adventure_Grid.get((GamePlayer.position+1))} nearby")
+        PrintSpace(2)
+
+    def GameLoop(start):
+
+        print(f"Your currently in {Adventure_Grid.get(GamePlayer.position)}")
+
+        GamePlayer.itemsstored = 0
+        for I in GamePlayer.inventory:
+            GamePlayer.itemsstored + GamePlayer.inventory.get(I)
+
+        if start != True:
+            printposition()
+
+        def Act(action):
+            if action == 1:
+                print(GamePlayer)
+                return GameLoop(False)
+            elif action == 2:
+                GamePlayer.position += 1
+                return GameLoop(False)
+            elif action == 3:
+                GamePlayer.position -= 1
+                return GameLoop(False)
+        
+        PrintSpace(3)
+
+        num = 1
+        interacting = True
+        lastprint = ""
+        while interacting:
+            
+            recount = 1
+            grid_data :dict = GridTypeData.get(GamePlayer.position)
+            item = grid_data.get(recount)
+            itemdata = GridValues.get(item)
+
+            ValidActions = {}
+
+            if itemdata != None:
+                
+                print(f"You find {grid_data.get(recount)}")
+
+                listcount = 0
+                listmax = len(itemdata)
+                for i in range(0,listmax):
+                    print(f": {itemdata[listcount]}") #{listcount}
+                    ValidActions.__setitem__(itemdata[listcount], True)
+                    listcount += 1
+
+                num += 1
+                recount += 1
+                PrintSpace(3)
+                if grid_data != {} and item != None:
+                   
+                    def Ask():
+                        def Action(acti):
+
+                            if acti == "Take":
+                                if GamePlayer.inventory.get(item) != None:
+                                    GamePlayer.inventory.__setitem__(item, GamePlayer.inventory.get(item) + 1)
+                                else:
+                                    GamePlayer.inventory.__setitem__(item, 1)
+
+                                grid_data.__setitem__(recount, None)
+
+                                return "Breakloop"
+
+                        act = input("")
+                        if ValidActions.get(act) != None and ValidActions.get(act) == True:
+                            returned = Action(act)
+                            if returned == "Breakloop":
+                                return "Breakloop"
+                        else:
+                            print("InvalidAction")
+                            returned = Ask()
+                            if returned == "Breakloop":
+                                return "Breakloop"
+
+                    returned = Ask()
+                    if returned == "Breakloop":
+                        break
+                else:
+                    break
+            else:
+                interacting = False
+                break
+                
+
+            pass
+
+        print(f"{1} : View Player")
+        print(f"{2} : Head Forwards")
+        print(f"{3} : Head Backwards")
+
+        PrintSpace(3)
+        action = input("")
+
+        if action == "RawPrint":
+            print(GridTypeData)
+            print(Adventure_Grid)
+            print(GamePlayer.position)
+            return GameLoop(False)
+        action = int(action)
+        Act(action)
+        if game_finished != True:
+            GameLoop(False)
+        pass
+
+    if answer != None :
+        if answer == "Yes":
+            print("For this multi user dungeon you will have to choose options by typing their number, i have also added Thirst, Hunger, Poison and Health. DEATH WILL BE APPARENT WHILE PLAYING")
+        beginning = random.randint(1,3)
+        if beginning == 1:
+            if Adventure_Grid.get((GamePlayer.position-1)) == Adventure_Grid.get((GamePlayer.position+1)):
+                print(f"You wake up inmiddle of two {Adventure_Grid.get((GamePlayer.position-1))}s, with nothing in your possession.")
+            else:  
+                print(f"You wake up near a {Adventure_Grid.get((GamePlayer.position-1))}, with nothing in your possession, you also notice a {Adventure_Grid.get((GamePlayer.position+1))} nearby")
+            GameLoop(True)
+        elif beginning == 2:
+            GamePlayer.inventory.__setitem__("Food", 1)
+            if Adventure_Grid.get((GamePlayer.position-1)) == Adventure_Grid.get((GamePlayer.position+1)):
+                print(f"You wake up inmiddle of two {Adventure_Grid.get((GamePlayer.position-1))}s, with nothing in your possession.")
+            else: 
+                print(f"You find yourself near a {Adventure_Grid.get((GamePlayer.position-1))}, with small rations in your possession, you also notice a {Adventure_Grid.get((GamePlayer.position+1))} nearby")
+            GameLoop(True)
+        else:
+            GamePlayer.inventory.__setitem__("Food", 4)
+            if Adventure_Grid.get((GamePlayer.position-1)) == Adventure_Grid.get((GamePlayer.position+1)):
+                print(f"You wake up inmiddle of two {Adventure_Grid.get((GamePlayer.position-1))}s, with nothing in your possession.")
+            else:
+                print(f"You appear to be near a {Adventure_Grid.get((GamePlayer.position-1))}, with rations for 4 days in your possession, you also notice a {Adventure_Grid.get((GamePlayer.position+1))} nearby")
+            GameLoop(True)
+    pass
 
 
 ValidGames = {
     "PDC": "Multi",
     "RPS": "Single",
+    "MUD": "Single",
 
     "Rock Paper Scissors": "Single",
+    "Multi User Dungeon": "Single",
     "Pig Dice Game": "Multi",
 }
 
@@ -263,8 +542,8 @@ def RunGame(): # pelin aloitus
     print("")
     
     print("> Pig Dice Game (PDC) < Multiplayer")
-    print("> Rock, Paper, Scissors (RPS) < Singleplayer with AI")
-
+    print("> Rock, Paper, Scissors (RPS) < Singleplayer")
+    print("> Multi User Dungeon (MUD) < Singleplayer")
     print("")
 
     print("------")
@@ -364,6 +643,8 @@ def RunGame(): # pelin aloitus
         ValidGame = True
     elif SelectGame == "Rock Paper Scissors" or SelectGame == "RPS":
         ValidGame = True
+    elif ValidGames.get(SelectGame) == "Single" or ValidGames.get(SelectGame) == "Multi":
+        ValidGame = True
     elif SelectGame == "None":
         return
     else:
@@ -399,6 +680,23 @@ def RunGame(): # pelin aloitus
             print("> Rock, Paper, Scissors (RPS)")
             print("------")
             game = R_P_S_AI(GameData)
+            if game == "Completed Game":
+                RunGame()
+        elif SelectGame == "Multi User Dungeon" or SelectGame == "MUD":
+            print("███╗░░░███╗██╗░░░██╗██╗░░░░░████████╗██╗  ██╗░░░██╗░██████╗███████╗██████╗░")
+            print("████╗░████║██║░░░██║██║░░░░░╚══██╔══╝██║  ██║░░░██║██╔════╝██╔════╝██╔══██╗")
+            print("██╔████╔██║██║░░░██║██║░░░░░░░░██║░░░██║  ██║░░░██║╚█████╗░█████╗░░██████╔╝")
+            print("██║╚██╔╝██║██║░░░██║██║░░░░░░░░██║░░░██║  ██║░░░██║░╚═══██╗██╔══╝░░██╔══██╗")
+            print("██║░╚═╝░██║╚██████╔╝███████╗░░░██║░░░██║  ╚██████╔╝██████╔╝███████╗██║░░██║")
+            print("╚═╝░░░░░╚═╝░╚═════╝░╚══════╝░░░╚═╝░░░╚═╝  ░╚═════╝░╚═════╝░╚══════╝╚═╝░░╚═╝")
+            print("")
+            print("██████╗░██╗░░░██╗███╗░░██╗░██████╗░███████╗░█████╗░███╗░░██╗")
+            print("██╔══██╗██║░░░██║████╗░██║██╔════╝░██╔════╝██╔══██╗████╗░██║")
+            print("██║░░██║██║░░░██║██╔██╗██║██║░░██╗░█████╗░░██║░░██║██╔██╗██║")
+            print("██║░░██║██║░░░██║██║╚████║██║░░╚██╗██╔══╝░░██║░░██║██║╚████║")
+            print("██████╔╝╚██████╔╝██║░╚███║╚██████╔╝███████╗╚█████╔╝██║░╚███║")
+            print("------")
+            game = Multi_user_dungeon(GameData)
             if game == "Completed Game":
                 RunGame()
 
