@@ -304,7 +304,7 @@ def R_P_S_AI(gamedata :dict):
     time.sleep(3)
     return "Completed Game"
 
-    
+grid_data = {}
 game_finished = False
 def Multi_user_dungeon(gamedata :dict):
 
@@ -335,6 +335,7 @@ def Multi_user_dungeon(gamedata :dict):
             game_finished = True
             finish_type = "Death"
             printcustom("died")
+            PrintSpace(2)
             print(GamePlayer)
             PrintSpace(8)
             return "ded"
@@ -390,7 +391,7 @@ def Multi_user_dungeon(gamedata :dict):
         else:  
             print(f"You are near a {Adventure_Grid.get((GamePlayer.position-1))}, with {GamePlayer.itemsstored} items in your possession, theres still a {Adventure_Grid.get((GamePlayer.position+1))} nearby")
         PrintSpace(2)
-
+    
     def GameLoop(start):
 
         print(f"Your currently in {Adventure_Grid.get(GamePlayer.position)}")
@@ -457,7 +458,7 @@ def Multi_user_dungeon(gamedata :dict):
                                 else:
                                     GamePlayer.inventory.__setitem__(item, 1)
 
-                                grid_data.__setitem__(recount, None)
+                                GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
 
                                 return "Breakloop"
                             elif acti == "Attack":
@@ -466,7 +467,7 @@ def Multi_user_dungeon(gamedata :dict):
                                 if inventory.get("Weapon") != None:
                                     inventory.__setitem__("Weapon",inventory.get("Weapon") - 1)
                                     print("1 Weapon Used")
-                                    grid_data.__setitem__(recount, None)
+                                    GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
                                 else:
                                     print("You fight barehanded")
                                     time.sleep(3)
@@ -474,11 +475,83 @@ def Multi_user_dungeon(gamedata :dict):
                                     victory = random.randint(0,100) <= 2
 
                                     if victory:
-                                        grid_data.__setitem__(recount, None)
+                                        GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
                                         return "Breakloop"
                                     else:
                                         GamePlayer.health = 0
                                         return "Died"
+                            elif acti == "Ignore":
+                                
+                                return "Breakloop"
+                            elif acti == "Drink":
+                                print("You drink water..")
+                                print("- 12 thirst")
+                                if GamePlayer.thirst >= 12:
+                                    GamePlayer.thirst -= 12
+                                else:
+                                    GamePlayer.thirst = 0
+                                GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
+                                return "Breakloop"
+                            elif acti == "Eat":
+                                print("You eat food..")
+                                print("- 6 hunger")
+                                if GamePlayer.hunger >= 6:
+                                    GamePlayer.hunger -= 6
+                                else:
+                                    GamePlayer.hunger = 0
+                                GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
+                                return "Breakloop"
+                            elif acti == "Consume":
+                                GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
+                                print("You consume poison..")
+                                print("- 6 health")
+                                if GamePlayer.health >= 6:
+                                    GamePlayer.health -= 6
+                                else:
+                                    GamePlayer.health = 0
+                                    return "Died"
+                                #HealthCheck()
+                                return "Breakloop"
+                            elif acti == "Retreat":
+                                GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
+                                print("You retreated slowly..")
+                                print("nothing noticed you move..")
+                                GamePlayer.position -= 2
+                                printposition()
+                                time.sleep(1)
+                                return "Breakloop"
+                            elif acti == "Run":
+                                item = GridTypeData.get(GamePlayer.position).get(recount)
+                                print("You Ran Fast..")
+
+                                if item == "Orc" or item == "Wolf":
+                                    if random.randint(0,100) <= 25:
+                                        print("A hostile saw you ran and caught you")
+                                        time.sleep(1)
+                                        print("You fight back..")
+                                        time.sleep(2)
+                                        if random.randint(0,100) <= 30:
+                                            GamePlayer.health = 0
+                                            return "Died"
+                                    else:
+                                        print("nothing noticed you move..")
+                                        GamePlayer.position -= 2
+                                        printposition()
+                                time.sleep(1)
+                                GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
+                                return "Breakloop"
+                            elif acti == "Await Daytime":
+                                print("You await daytime..")
+                                time.sleep(3)
+                                print("You feel refreshed..")
+                                print("+ 3 health")
+                                if GamePlayer.health - GamePlayer.maxhealth >= 3:
+                                    GamePlayer.health += 3
+                                else:
+                                    GamePlayer.health = GamePlayer.maxhealth
+                                time.sleep(1)
+                                return "Breakloop"
+
 
                         act = input("")
                         if ValidActions.get(act) != None and ValidActions.get(act) == True:
