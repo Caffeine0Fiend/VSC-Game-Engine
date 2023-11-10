@@ -304,7 +304,9 @@ def R_P_S_AI(gamedata :dict):
     time.sleep(3)
     return "Completed Game"
 
-grid_data = {}
+worlddata = {
+    "day": 0
+}
 game_finished = False
 def Multi_user_dungeon(gamedata :dict):
 
@@ -431,6 +433,8 @@ def Multi_user_dungeon(gamedata :dict):
             item = grid_data.get(recount)
             itemdata = GridValues.get(item)
 
+            ConcurrentData = {}
+            ConcurrentData.__setitem__("item",item)
             ValidActions = {}
 
             if itemdata != None:
@@ -447,16 +451,16 @@ def Multi_user_dungeon(gamedata :dict):
                 num += 1
                 recount += 1
                 PrintSpace(3)
-                if grid_data != {} and item != None:
+                if grid_data != {} and ConcurrentData.get("item") != None:
                    
                     def Ask():
                         def Action(acti):
 
                             if acti == "Take":
-                                if GamePlayer.inventory.get(item) != None:
-                                    GamePlayer.inventory.__setitem__(item, GamePlayer.inventory.get(item) + 1)
+                                if GamePlayer.inventory.get(ConcurrentData.get("item")) != None:
+                                    GamePlayer.inventory.__setitem__(ConcurrentData.get("item"), GamePlayer.inventory.get(ConcurrentData.get("item")) + 1)
                                 else:
-                                    GamePlayer.inventory.__setitem__(item, 1)
+                                    GamePlayer.inventory.__setitem__(ConcurrentData.get("item"), 1)
 
                                 GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
 
@@ -537,6 +541,11 @@ def Multi_user_dungeon(gamedata :dict):
                                         print("nothing noticed you move..")
                                         GamePlayer.position -= 2
                                         printposition()
+                                else:
+                                        print("nothing noticed you move..")
+                                        GamePlayer.position -= 2
+                                        printposition()
+                                
                                 time.sleep(1)
                                 GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
                                 return "Breakloop"
@@ -545,6 +554,7 @@ def Multi_user_dungeon(gamedata :dict):
                                 time.sleep(3)
                                 print("You feel refreshed..")
                                 print("+ 3 health")
+                                worlddata["day"] += 1
                                 if GamePlayer.health - GamePlayer.maxhealth >= 3:
                                     GamePlayer.health += 3
                                 else:
