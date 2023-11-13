@@ -430,6 +430,8 @@ def Multi_user_dungeon(gamedata :dict):
             
             recount = 1
             grid_data :dict = GridTypeData.get(GamePlayer.position)
+            if grid_data == None:
+                break
             item = grid_data.get(recount)
             itemdata = GridValues.get(item)
 
@@ -462,7 +464,8 @@ def Multi_user_dungeon(gamedata :dict):
                                 else:
                                     GamePlayer.inventory.__setitem__(ConcurrentData.get("item"), 1)
 
-                                GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
+                                GridTypeData.pop(GamePlayer.position)
+                                #GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
 
                                 print("You pick it up and store it.")
                                 time.sleep(1)
@@ -473,7 +476,7 @@ def Multi_user_dungeon(gamedata :dict):
                                 if inventory.get("Weapon") != None:
                                     inventory.__setitem__("Weapon",inventory.get("Weapon") - 1)
                                     print("1 Weapon Used")
-                                    GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
+                                    GridTypeData.pop(GamePlayer.position)
                                 else:
                                     print("You fight barehanded")
                                     time.sleep(3)
@@ -481,7 +484,7 @@ def Multi_user_dungeon(gamedata :dict):
                                     victory = random.randint(0,100) <= 2
 
                                     if victory:
-                                        GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
+                                        GridTypeData.pop(GamePlayer.position)
                                         return "Breakloop"
                                     else:
                                         GamePlayer.health = 0
@@ -496,7 +499,7 @@ def Multi_user_dungeon(gamedata :dict):
                                     GamePlayer.thirst -= 12
                                 else:
                                     GamePlayer.thirst = 0
-                                GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
+                                GridTypeData.pop(GamePlayer.position)
                                 return "Breakloop"
                             elif acti == "Eat":
                                 print("You eat food..")
@@ -505,10 +508,10 @@ def Multi_user_dungeon(gamedata :dict):
                                     GamePlayer.hunger -= 6
                                 else:
                                     GamePlayer.hunger = 0
-                                GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
+                                GridTypeData.pop(GamePlayer.position)
                                 return "Breakloop"
                             elif acti == "Consume":
-                                GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
+                                GridTypeData.pop(GamePlayer.position)
                                 print("You consume poison..")
                                 print("- 6 health")
                                 if GamePlayer.health >= 6:
@@ -519,7 +522,7 @@ def Multi_user_dungeon(gamedata :dict):
                                 #HealthCheck()
                                 return "Breakloop"
                             elif acti == "Retreat":
-                                GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
+                                GridTypeData.pop(GamePlayer.position)
                                 print("You retreated slowly..")
                                 print("nothing noticed you move..")
                                 GamePlayer.position -= 2
@@ -527,7 +530,7 @@ def Multi_user_dungeon(gamedata :dict):
                                 time.sleep(1)
                                 return "Breakloop"
                             elif acti == "Run":
-                                item = GridTypeData.get(GamePlayer.position).get(recount)
+                                GridTypeData.pop(GamePlayer.position)
                                 print("You Ran Fast..")
 
                                 if item == "Orc" or item == "Wolf":
@@ -569,10 +572,10 @@ def Multi_user_dungeon(gamedata :dict):
                         if ValidActions.get(act) != None and ValidActions.get(act) == True:
                             returned = Action(act)
                             if returned == "Breakloop":
-                                GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
+                                #GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
                                 return "Breakloop"
                             elif returned == "Died":
-                                GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
+                                #GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
                                 return "Died"
                         else:
                             print("InvalidAction")
