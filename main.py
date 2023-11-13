@@ -596,9 +596,6 @@ def Multi_user_dungeon(gamedata :dict):
             else:
                 interacting = False
                 break
-                
-
-            pass
 
         if game_finished != True or GamePlayer.health == 0:
 
@@ -625,7 +622,6 @@ def Multi_user_dungeon(gamedata :dict):
                 return "Completed Game"
         else:
             return "Completed Game"
-        pass
 
     if answer != None :
         if answer == "Yes":
@@ -663,7 +659,6 @@ def Multi_user_dungeon(gamedata :dict):
                 print("Closing game in 3 seconds")
                 time.sleep(3)
                 return "Completed Game"
-    pass
 
 
 ValidGames = {
@@ -801,7 +796,6 @@ def RunGame(): # pelin aloitus
             
             if AllPlayersIn:
                 break
-            pass
 
     if SelectGame == "Pig Dice Game" or SelectGame == "PDC":
         config() # call config
