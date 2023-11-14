@@ -197,7 +197,7 @@ def Pig_Game(gamedata :dict): # peli looppi pelin loppuun asti
 
         with open("data.txt","w") as file:
             file.write("\n"+f"PIG Game results:\nWinner: " +gamedata["Winner"])
-            
+
         print(f"Returning to main menu in 3 seconds")
         time.sleep(3)
         return "Completed Game"
@@ -707,7 +707,7 @@ def Multi_user_dungeon(gamedata :dict):
                 time.sleep(3)
                 return "Completed Game"
 
-
+    
 ValidGames = {
     "PDC": "Multi",
     "RPS": "Single",
