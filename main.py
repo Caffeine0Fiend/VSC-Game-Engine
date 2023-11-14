@@ -42,10 +42,10 @@ Usernames = {}
 Adventure_Grid = {} # grid positions
 GridTypeData = {} # storing data for grid positions
 selections = {
-        1: "Rock",
-        2: "Paper",
-        3: "Scissors",
-    }
+    1: "Rock",
+    2: "Paper",
+    3: "Scissors",
+}
 Grid_Types = {
     1: "Forest",
     2: "Brick Buidling",
@@ -305,7 +305,8 @@ def R_P_S_AI(gamedata :dict):
     return "Completed Game"
 
 worlddata = {
-    "day": 0
+    "day": 0,
+    "daycounter": 0,
 }
 game_finished = False
 def Multi_user_dungeon(gamedata :dict):
@@ -329,7 +330,7 @@ def Multi_user_dungeon(gamedata :dict):
         3: [500, "250x250"],
         4: [1000, "500x500"],
     }
-
+    
     finish_type = None
 
     def HealthCheck():
@@ -342,8 +343,9 @@ def Multi_user_dungeon(gamedata :dict):
             PrintSpace(8)
             return "ded"
         return "alive"
-        
+
     checkup = HealthCheck()
+
 
     if checkup == "ded":
         return "Completed Game"
@@ -397,6 +399,40 @@ def Multi_user_dungeon(gamedata :dict):
     def GameLoop(start):
 
         print(f"Your currently in {Adventure_Grid.get(GamePlayer.position)}")
+
+        worlddata["daycounter"] += 0.25
+        print(worlddata["daycounter"])
+
+        if worlddata["daycounter"] >= 1:
+            worlddata["daycounter"] = 0
+            worlddata["day"] += 1
+            print("Day passes.")
+            GamePlayer.hunger += random.randint(1,8)
+            GamePlayer.thirst += random.randint(1,8)
+            pass
+
+
+        if GamePlayer.hunger >= 100:
+            print("Max Hunger")
+            if GamePlayer.inventory.get("Food"):
+                print("Food consumed..")
+                GamePlayer.inventory.__setitem__("Food",  GamePlayer.inventory.get("Food") - 1)       
+                GamePlayer.hunger -= 6
+            else:
+                print("You suffer from starvation (find food.)")
+                GamePlayer.health -= 9
+                time.sleep(2)
+
+        if GamePlayer.thirst >= 100:
+            print("Max Thirst")
+            if GamePlayer.inventory.get("Water Bottle"):
+                print("Water drank")
+                GamePlayer.inventory.__setitem__("Water Bottle",  GamePlayer.inventory.get("Water Bottle") - 1)       
+                GamePlayer.thirst -= 6
+            else:
+                print("You suffer from thirst (find water.)")
+                GamePlayer.health -= 9
+                time.sleep(2)
 
         state = HealthCheck()
 
@@ -552,7 +588,10 @@ def Multi_user_dungeon(gamedata :dict):
                                         printposition()
                                 
                                 time.sleep(1)
-                                GridTypeData.get(GamePlayer.position).__setitem__(recount, None)
+                                if GridTypeData.get(int(GamePlayer.position)) != None:
+
+                                    GridTypeData.pop(int(GamePlayer.position))
+                                    
                                 return "Breakloop"
                             elif acti == "Await Daytime":
                                 print("You await daytime..")
