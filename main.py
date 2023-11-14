@@ -101,6 +101,7 @@ class player:
         pass
 
     def __str__(self) -> str:
+        PrintSpace(255)
         print("█▀█ █░░ ▄▀█ █▄█ █▀▀ █▀█   █▀ ▀█▀ ▄▀█ ▀█▀ █▀")
         print("█▀▀ █▄▄ █▀█ ░█░ ██▄ █▀▄   ▄█ ░█░ █▀█ ░█░ ▄█")
         print("")
@@ -113,6 +114,8 @@ class player:
         print("-")
         for I in self.inventory:
             print(self.inventory.get(I), I)
+
+        PrintSpace(2)
         return "-"
 
 # functions
@@ -401,7 +404,6 @@ def Multi_user_dungeon(gamedata :dict):
         print(f"Your currently in {Adventure_Grid.get(GamePlayer.position)}")
 
         worlddata["daycounter"] += 0.25
-        print(worlddata["daycounter"])
 
         if worlddata["daycounter"] >= 1:
             worlddata["daycounter"] = 0
@@ -591,7 +593,7 @@ def Multi_user_dungeon(gamedata :dict):
                                 if GridTypeData.get(int(GamePlayer.position)) != None:
 
                                     GridTypeData.pop(int(GamePlayer.position))
-                                    
+
                                 return "Breakloop"
                             elif acti == "Await Daytime":
                                 print("You await daytime..")
