@@ -195,6 +195,9 @@ def Pig_Game(gamedata :dict): # peli looppi pelin loppuun asti
         for Player in gamedata["Players"]:
             print(f"{Usernames.get(Player)} scored a total of {Points.get(Player)} points")
 
+        with open("data.txt","w") as file:
+            file.write("\n"+f"PIG Game results:\nWinner: " +gamedata["Winner"])
+            
         print(f"Returning to main menu in 3 seconds")
         time.sleep(3)
         return "Completed Game"
