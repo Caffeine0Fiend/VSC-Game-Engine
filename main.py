@@ -32,6 +32,9 @@
 
 # ----------------------------------------------------------------
 
+# Utility
+Nextline = "\n"
+
 # imports
 import random
 import time
